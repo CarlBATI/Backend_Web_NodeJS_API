@@ -62,7 +62,7 @@ TS}o--o{TT
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-NGp4Ir/plantuml-8jPsT2.png]]
+[[file:/tmp/babel-NGp4Ir/plantuml-0dfRJg.png]]
 
 ** [X] Create Batabase
 #+begin_src sql
@@ -87,5 +87,8 @@ Opted for Knex.js (~knex~) with ~mysql~ driver.
 **** [ ] Table Tags
 * [ ] Write README.md
 * [ ] CRUD Interfaces
+** [ ] Make First Route: ~routes/notes.js~ POST
+** [ ] Set Up Testing
+*** [ ] Run First Test: ~routes/notes.js~ POST
 ** [ ] 1
 ** [ ] 2
