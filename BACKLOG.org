@@ -1,5 +1,8 @@
 #+title: Backlog
 
+* [0/1] Concept
+** IDEA QoL API: Quality of Life API
+This API aims to provide a comprehensive suite of text-based services designed to assist with various aspects of daily life management. It will offer functionalities such as note-taking, tagging for organization, and source referencing. This will enable users to keep track of important information, categorize it effectively, and reference the original sources, all in one place. The goal is to enhance productivity and make life management more streamlined and efficient.
 * DONE Initialize NodeJS Project
 * TODO Setup Environment
 ** [X] Dotenv ~.env~
@@ -9,6 +12,53 @@
 ** [X] Make npm script ~start~
 * [X] Database
 ** [ ] Create ERD
+#+begin_src plantuml
+@startuml
+skinparam dpi 300
+entity "Notes" as N {
+        ,* title
+        +created_at
+        +modified_at
+        content
+        ~user
+}
+entity "Tags" as T {
+        ,* tag,
+        ,* color
+}
+
+entity "Sources" as S {
+        ,* source
+        title
+}
+
+
+entity "TrainingSet" as TS {
+        ,* date,
+        ,* reps
+        ,* weight
+        ,* rpe/rir
+        performed_at
+        note
+}
+
+
+entity "TrainingTags" as TT {
+        ,*tag
+        ,* color
+}
+
+N}o--o{N
+N}o--o{T
+N}o--o{S
+
+TS}o--o{TT
+@enduml
+#+end_src
+
+#+RESULTS:
+[[file:/tmp/babel-NGp4Ir/plantuml-YzB2q0.png]]
+
 ** [X] Create Batabase
 #+begin_src sql
 CREATE DATABASE backend_web_nodejs_api;
