@@ -73,10 +73,13 @@ GRANT ALL PRIVILEGES ON backend_web_nodejs_api.* TO 'backend_web_nodejs'@'localh
 
 FLUSH PRIVILEGES;
 #+end_src
-** [ ] SetupMariaDB Connector: ~/database/connection.js~
-* [ ] Create Migrations
-** [ ] Table Notes
-** [ ] Table Tags
+** [X] SetupMariaDB Connector: ~/database/connection.js~
+*** [X] Test Connection
+** [ ] Setup Migration Tool
+Opted for Knex.js (~knex~) with ~mysql~ driver.
+*** [ ] Create Migrations
+**** [ ] Table Notes
+**** [ ] Table Tags
 * [ ] Write README.md
 * [ ] CRUD Interfaces
 ** [ ] 1
