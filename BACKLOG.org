@@ -22,9 +22,13 @@ entity "Notes" as N {
         content
         ~user
 }
+
+entity "Color" as C {
+        ,* name
+}
+
 entity "Tags" as T {
         ,* tag,
-        ,* color
 }
 
 entity "Sources" as S {
@@ -49,6 +53,7 @@ entity "TrainingTags" as TT {
 }
 
 N}o--o{N
+C||--o{T
 N}o--o{T
 N}o--o{S
 
@@ -57,7 +62,7 @@ TS}o--o{TT
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-NGp4Ir/plantuml-YzB2q0.png]]
+[[file:/tmp/babel-NGp4Ir/plantuml-8jPsT2.png]]
 
 ** [X] Create Batabase
 #+begin_src sql

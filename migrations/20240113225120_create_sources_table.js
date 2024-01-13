@@ -7,7 +7,7 @@ exports.up = function(knex) {
         table.increments('id');
         table.string('url').notNullable();
         table.string('title').notNullable();
-        table.text('description');
+        table.string('description');
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.timestamp('last_checked_at');
     });
