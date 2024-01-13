@@ -1,0 +1,33 @@
+#+title: Backlog
+
+* DONE Initialize NodeJS Project
+* TODO Setup Environment
+** [X] Dotenv ~.env~
+*** [X] DB Variables
+*** [X] Host and Port
+** [X] Make ~app.js~
+** [X] Make npm script ~start~
+* [X] Database
+** [ ] Create ERD
+** [X] Create Batabase
+#+begin_src sql
+CREATE DATABASE backend_web_nodejs_api;
+#+end_src
+** [X] Create User
+#+begin_src sql
+CREATE USER 'backend_web_nodejs'@'localhost' IDENTIFIED BY 'HWMhVsmkoGnD8Bs8yqJh';
+#+end_src
+** [X] Grant Privileges
+#+begin_src sql
+GRANT ALL PRIVILEGES ON backend_web_nodejs_api.* TO 'backend_web_nodejs'@'localhost';
+
+FLUSH PRIVILEGES;
+#+end_src
+** [ ] SetupMariaDB Connector: ~/database/connection.js~
+* [ ] Create Migrations
+** [ ] Table Notes
+** [ ] Table Tags
+* [ ] Write README.md
+* [ ] CRUD Interfaces
+** [ ] 1
+** [ ] 2
