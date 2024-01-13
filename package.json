@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "expres": "^0.0.5",
+    "mariadb": "^3.2.3"
+  }
 }
