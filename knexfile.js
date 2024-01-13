@@ -1,12 +1,9 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 
 dotenv.config();
 
-export default {
-
-  development:
-
- {
+module.exports = {
+  development: {
     client: 'mysql',
     connection: {
       host: process.env.DB_HOST,
@@ -18,6 +15,4 @@ export default {
       tableName: 'knex_migrations'
     }
   },
-
-  // Add other environments (staging, production) as needed
 };
