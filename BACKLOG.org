@@ -87,8 +87,32 @@ Opted for Knex.js (~knex~) with ~mysql~ driver.
 **** [ ] Table Tags
 * [ ] Write README.md
 * [ ] CRUD Interfaces
-** [ ] Make First Route: ~routes/notes.js~ POST
-** [ ] Set Up Testing
-*** [ ] Run First Test: ~routes/notes.js~ POST
-** [ ] 1
+** [X] Make First Route: ~routes/notes.js~ POST
+Works: uses services/notesService
+Route: routes/notesRouter.js
+** [X] Set Up Testing
+- Using ~jest~ as testing framework
+- Using ~upertest~
+*** [X] Run First Test: ~routes/notes.js~ POST
+** [ ] 1 Notes API CRUD Interface
+*** [X] POST /api/notes: Create
+**** [X] Create Route
+**** [X] Create Service
+**** [X] Create Test
+**** [X] Test Success
+*** [X] GET /api/notes and /api/notes/{id}: Read
+**** [X] Create Route
+**** [X] Create Service
+**** [X] Create Test
+**** [X] Test Success
+*** [X] PUT /api/notes and /api/notes/{id}: Update
+**** [X] Create Route
+**** [X] Create Service
+**** [X] Create Test
+**** [X] Test Success
+*** [ ] DELETE /api/notes: Delete
+**** [ ] Create Route
+**** [ ] Create Service
+**** [ ] Create Test
+**** [ ] Test Success
 ** [ ] 2

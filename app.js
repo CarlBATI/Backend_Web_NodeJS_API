@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 const express = require('express');
 // Routes
-const notesRouter = require('./routes/notes');
+const notesRouter = require('./routes/notesRouter');
 
 // Load environment variables
 dotenv.config();
