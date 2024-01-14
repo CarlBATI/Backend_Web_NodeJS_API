@@ -48,8 +48,16 @@ class MaxValueError extends Error {
     this.name = 'ExceededValueError';
   }
 }
+
 /**
  * MinValueError: thrown when a value is less than a minimum value
+ * 
+ * @param {string} field The name of the field that was invalid
+ * @param {number} minValue The minimum value allowed for the field
+ * 
+ * @example
+ * throw new MinValueError('title', 100);
+ * // MinValueError: Title must not be less than 100
  */
 class MinValueError extends Error {
   constructor(field, minValue) {
