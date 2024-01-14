@@ -17,24 +17,44 @@ class UndefinedError extends Error {
         super(field + ' is undefined');
         this.name = 'UndefinedError';
     }
-}
+};
 
 /**
  * TypeError: thrown when a value is not of the expected type
  * 
  * @param {string} field The name of the field that was invalid
  * @param {string} type The expected type of the field
+ * @param {string[]} type An array of expected types for the field
+ * @param {none} type If no type is provided, the error message will be generic
+ *
+ * @example
+ * throw new TypeError('title', 'string');
+ * // TypeError: Title must be of type string
  * 
  * @example
- * throw new TypeError('title', 'a string');
- * // TypeError: Title must be a string 
+ * throw new TypeError('title', ['string', 'number']);
+ * // TypeError: Title must be of one types: string, number
+ * 
+ * @example
+ * throw new TypeError('title');
+ * // TypeError: Invalid type for title
  */ 
 class TypeError extends Error {
   constructor(field, type) {
-    super(`${field.charAt(0).toUpperCase() + field.slice(1)} must be ${type}`);
+    let errorMessage;
+    
+    if (typeof type === 'string') {
+      errorMessage = `${field.charAt(0).toUpperCase() + field.slice(1)} must be of type ${type}`;
+    } else if (Array.isArray(type)) {
+      errorMessage = `${field.charAt(0).toUpperCase() + field.slice(1)} must be of one types: ${type.join(', ')}`;
+    } else {
+      errorMessage = `Invalid type for ${field.charAt(0).toUpperCase() + field.slice(1)}`;
+    }
+
+    super(errorMessage);
     this.name = 'TypeError';
   }
-}
+};
 
 /**
  * NoIntegerError: thrown when a value is not an integer
@@ -45,10 +65,26 @@ class TypeError extends Error {
  * throw new NoIntegerError('id');
  * // NoIntegerError: Id must be an integer
  */
-class NoIntegerError extends Error {
+class NotIntegerError extends Error {
     constructor(field) {
         super(`${field.charAt(0).toUpperCase() + field.slice(1)} must be an integer`);
         this.name = 'NoIntegerError';
+    }
+};
+
+/**
+ * InvalidNumberStringError: thrown when a value is not a valid number string
+ * 
+ * @param {string} field The name of the field that was invalid
+ * 
+ * @example
+ * throw new InvalidNumberStringError('id');
+ * // InvalidNumberStringError: Id must be a valid number string
+ */
+class InvalidNumberStringError extends Error {
+    constructor(field) {
+        super(`Invalid number string for ${field}`);
+        this.name = 'InvalidNumberStringError';
     }
 };
 
@@ -68,7 +104,7 @@ class EmptyValueError extends Error {
     super(`${field.charAt(0).toUpperCase() + field.slice(1)} must not be empty`);
     this.name = 'EmptyValueError';
   }
-}
+};
 
 /**
  * MaxValueError: thrown when a value is greater than a maximum value
@@ -85,7 +121,7 @@ class MaxValueError extends Error {
     super(`${field.charAt(0).toUpperCase() + field.slice(1)} must not be greater than ${maxValue}`);
     this.name = 'ExceededValueError';
   }
-}
+};
 
 /**
  * MinValueError: thrown when a value is less than a minimum value
@@ -116,7 +152,7 @@ class NotFoundError extends Error {
         super(`record was not found`);
         this.name = 'NotFoundError';
     }
-}
+};
 
 /** 
  * ServerError: thrown when there is a server error
@@ -130,12 +166,13 @@ class ServerError extends Error {
         super('Server error');
         this.name = 'ServerError';
     }
-}
+};
 
 module.exports = {
     UndefinedError,
     TypeError,
-    NoIntegerError,
+    NotIntegerError,
+    InvalidNumberStringError,
     EmptyValueError,
     MaxValueError,
     MinValueError,
