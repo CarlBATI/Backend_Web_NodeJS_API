@@ -28,6 +28,30 @@ async function getConnection() {
 }
 
 /**
+ * Execute a query using a connection from the pool.
+ * 
+ * @param {string} sql - The SQL query to execute.
+ * @param {Array} params - The parameters to pass to the query.
+ * 
+ * @returns {Promise<Array>} A Promise that resolves to the results of the query.
+ */
+async function query(sql, params) {
+    const conn = await getConnection();
+    try {
+        const results = await conn.query(sql, params);
+        return results;
+    } finally {
+        if (conn) conn.release();
+    }
+}
+
+module.exports = {
+    getConnection,
+    closePool,
+    query
+};
+
+/**
  * Close the connection pool.
  * 
  * @throws {Error} Will throw an error if the pool cannot be closed.
@@ -48,4 +72,4 @@ async function consoleLogPoolStats() {
     console.log("Idle connections: ", pool.idleConnections());
 }
 
-module.exports = { getConnection, closePool, consoleLogPoolStats };
+module.exports = { getConnection, query,  closePool, consoleLogPoolStats };
