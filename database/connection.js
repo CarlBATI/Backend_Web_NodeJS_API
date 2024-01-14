@@ -29,6 +29,9 @@ async function getConnection() {
 
 /**
  * Close the connection pool.
+ * 
+ * @throws {Error} Will throw an error if the pool cannot be closed.
+ * 
  * @returns {Promise<void>} A Promise that resolves when the pool has been closed.
  */
 async function closePool() {
@@ -45,4 +48,4 @@ async function consoleLogPoolStats() {
     console.log("Idle connections: ", pool.idleConnections());
 }
 
-module.exports = { getConnection, closePool };
+module.exports = { getConnection, closePool, consoleLogPoolStats };
