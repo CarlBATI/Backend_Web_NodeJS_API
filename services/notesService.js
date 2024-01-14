@@ -1,15 +1,17 @@
 const { getConnection } = require('../database/connection');
 const { validateString, validateId } = require('../utils/validate');
 const { NotFoundError } = require('../utils/errors/query.errors');
+const { ValidationError } = require('../utils/errors/validation.errors');
 
 
 /** 
  *  Create a new note with the specified title and content
+ * 
  *  @param {string} title - The title of the note
  *  @param {string} content - The content of the note
  * 
  *  @throws {Error} Will throw an error if the value does not meet the validation criteria 
- * 
+ *
  *  @returns {Promise<Object>} A promise that resolves to the newly created note. The note is an object with properties 'id', 'title', and 'content'.
  *  
  *  @example
@@ -72,13 +74,54 @@ async function readNoteById(id) {
     return rows[0];
 }
 
-async function readNotes() {}
-
-async function updateNote(id, title, content) {
+/** 
+ * Read all notes
+ *
+ * @returns {Promise<Array>} A promise that resolves to an array of notes. Each note is an object with properties 'id', 'title', and 'content'.
+ * 
+ * @example
+ * const notes = await readNotes();
+ * console.log(notes);
+ * // [
+ * //   { id: 1, title: 'My note', content: 'This is my note' },
+ * //   { id: 2, title: 'Another note', content: 'This is another note' }
+ * // ] 
+ */
+async function readNotes() {
     const conn = await getConnection();
     try {
-        const [result] = await conn.query('UPDATE Notes SET title = ?, content = ? WHERE id = ?', [title, content, id]);
-        return result.affectedRows > 0;
+        const rows = await conn.query('SELECT * FROM Notes');
+        return rows;
+    } finally {
+        if (conn) conn.release();
+    }
+}
+
+/**
+ * Update a note by its ID
+ * 
+ * @param {string} id - The ID of the note to update
+ * @param {string} title - The title of the note
+ * @param {string} content - The content of the note
+ * 
+ * @throws {Error|ValidationError} Will throw an error if the value does not meet the validation criteria
+ * @throws {NotFoundError} Will throw a NotFoundError if the note is not found
+ * 
+ * @returns {Promise<Object>} A promise that resolves to the updated note. The note is an object with properties 'id', 'title', and 'content'.
+ */
+async function updateNoteById(id, title, content) {
+    validateId(id);
+    validateString('title', title, 100, 1);
+    validateString('content', content, 10000);
+
+    const conn = await getConnection();
+    try {
+        const result = await conn.query('UPDATE Notes SET title = ?, content = ? WHERE id = ?', [title, content, id]);
+        if (result.affectedRows === 0) {
+            throw new NotFoundError();
+        }
+        const [updatedNote] = await conn.query('SELECT * FROM Notes WHERE id = ?', [id]);
+        return updatedNote;
     } finally {
         if (conn) conn.release();
     }
@@ -108,7 +151,7 @@ module.exports = {
     createNote,
     readNoteById,
     readNotes,
-    updateNote,
+    updateNoteById,
     deleteNoteById,
     deleteNotesByIds
 };
