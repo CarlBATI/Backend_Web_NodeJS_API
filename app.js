@@ -1,19 +1,24 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const { getConnection } = require('./database/connection');
-dotenv.config();
+// Routes
+const notesRouter = require('./routes/notes');
 
+// Load environment variables
+dotenv.config();
+// Create new express instance
 const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Routes
+app.use('/api', notesRouter);
+
 const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
 
-app.get('/', async (req, res) => {
-    const conn = await getConnection();
-    // Use the connection
-    conn.end();
-    res.send('Hello World!');
-});
-
+// Start the server
 app.listen(port, () => {
     console.log(`App listening at http://${host}:${port}`);
 });
