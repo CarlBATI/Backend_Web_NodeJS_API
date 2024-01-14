@@ -1,4 +1,4 @@
-const { UndefinedError, TypeError, MaxValueError, MinValueError } = require('../../utils/errors');
+const { UndefinedError, TypeError, MaxValueError, MinValueError  } = require('../../utils/errors/validation.errors');
 const { validateString } = require('../../utils/validate');
 
 describe('validateString', () => {
@@ -20,5 +20,4 @@ describe('validateString', () => {
     it('should throw MinValueError if hasMinLength is true and value length is less than minLength', () => {
         expect(() => validateString('field', 'short', 100, 10, true)).toThrow(MinValueError);
     });
-
 });

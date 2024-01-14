@@ -1,5 +1,5 @@
-const { EmptyValueError, UndefinedError, TypeError, MinValueError, NotIntegerError, InvalidNumberStringError } = require('../../utils/errors');
-const { validateString, validateId } = require('../../utils/validate');
+const { UndefinedError, TypeError, InvalidNumberStringError, NotIntegerError, MaxValueError, MinValueError} = require('../../utils/errors/validation.errors');
+const { validateId } = require('../../utils/validate');
 
 /** 
  * ValidateId Test Suite

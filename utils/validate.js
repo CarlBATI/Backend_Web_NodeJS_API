@@ -1,4 +1,4 @@
-const { UndefinedError, TypeError, NotIntegerError, InvalidNumberStringError, EmptyValueError, MaxValueError, MinValueError } = require('../utils/errors');
+const { UndefinedError, TypeError, NotIntegerError, InvalidNumberStringError, EmptyValueError, MaxValueError, MinValueError } = require('../utils/errors/validation.errors');
 
 /** 
  * Validate a string value
@@ -23,7 +23,6 @@ const { UndefinedError, TypeError, NotIntegerError, InvalidNumberStringError, Em
  * // MaxValueError: title must be at most 10 characters long
 */
 function validateString(field, value, maxLength = null, minLength = null) {
-    console.log(typeof value)
     if (value === undefined) {
         throw new UndefinedError(field);
     }
