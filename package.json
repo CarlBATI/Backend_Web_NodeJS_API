@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "jest --verbose --runInBand --detectOpenHandles --forceExit"
+    "test": "jest --verbose",
+    "test-options": "jest --verbose --detectOpenHandles --runInBand --forceExit"
   },
   "keywords": [],
   "author": "",
