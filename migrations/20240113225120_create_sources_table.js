@@ -9,7 +9,7 @@ exports.up = function(knex) {
         table.string('title').notNullable();
         table.string('description');
         table.timestamp('created_at').defaultTo(knex.fn.now());
-        table.timestamp('last_checked_at');
+        table.timestamp('last_verfied_at');
     });
 };
 
