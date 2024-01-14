@@ -7,7 +7,8 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "test": "jest --verbose",
-    "test-options": "jest --verbose --detectOpenHandles --runInBand --forceExit"
+    "test-options": "jest --verbose --detectOpenHandles --runInBand --forceExit",
+    "db:clear": "node database/clearDatabase.js"
   },
   "keywords": [],
   "author": "",
