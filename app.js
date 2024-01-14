@@ -21,3 +21,6 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`App listening at http://${host}:${port}`);
 });
+
+// Export the app
+module.exports = app;
