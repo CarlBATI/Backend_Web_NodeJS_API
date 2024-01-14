@@ -4,18 +4,28 @@
 // These tests will fail if the database is not running.
 // The POST /notes route must be tested first because the other tests rely on it.
 // The tests in this file do not clean up after themselves.
+// Tests are ordered according to CRUD (Create, Read, Update, Delete)
+//==================================================================================================
 
+// Dependencies
+//--------------------------------------------------------
 const request = require('supertest');
 const express = require('express');
 const notesRouter = require('../../routes/notesRouter');
 
+// Setup
+//--------------------------------------------------------
 const app = express();
 app.use(express.json());
 app.use('/', notesRouter);
 
+// Constants
+//--------------------------------------------------------
 const title = 'Test Title';
 const content = 'Test Content';
 
+// Tests
+//--------------------------------------------------------
 /**  
  * Test route for POST /api/notes
  */ 
