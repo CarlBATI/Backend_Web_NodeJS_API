@@ -1,10 +1,25 @@
-/**
- * Custom error classes
- * Basic Errors with custom names and messages
- */
+// Description: Defines custom validation errors
+
+/** 
+ * Base class for validation errors
+ * 
+ * @extends Error
+ * 
+ * @example
+ * throw new ValidationError('Invalid value');
+ * // ValidationError: Invalid value
+ */ 
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
 
 /**
  * UndefinedError: thrown when a value is undefined
+ * 
+ * @extends ValidationError
  * 
  * @param {string} field The name of the field that was undefined
  * 
@@ -12,7 +27,7 @@
  * throw new UndefinedError('title');
  * // UndefinedError: Title is undefined
  */
-class UndefinedError extends Error {
+class UndefinedError extends ValidationError {
     constructor(field,) {
         super(field + ' is undefined');
         this.name = 'UndefinedError';
@@ -21,6 +36,8 @@ class UndefinedError extends Error {
 
 /**
  * TypeError: thrown when a value is not of the expected type
+ * 
+ * @extends ValidationError
  * 
  * @param {string} field The name of the field that was invalid
  * @param {string} type The expected type of the field
@@ -39,7 +56,7 @@ class UndefinedError extends Error {
  * throw new TypeError('title');
  * // TypeError: Invalid type for title
  */ 
-class TypeError extends Error {
+class TypeError extends ValidationError {
   constructor(field, type) {
     let errorMessage;
     
@@ -59,13 +76,15 @@ class TypeError extends Error {
 /**
  * NoIntegerError: thrown when a value is not an integer
  * 
+ * @extends ValidationError
+ * 
  * @param {string} field The name of the field that was invalid
  * 
  * @example
  * throw new NoIntegerError('id');
  * // NoIntegerError: Id must be an integer
  */
-class NotIntegerError extends Error {
+class NotIntegerError extends ValidationError {
     constructor(field) {
         super(`${field.charAt(0).toUpperCase() + field.slice(1)} must be an integer`);
         this.name = 'NoIntegerError';
@@ -75,13 +94,15 @@ class NotIntegerError extends Error {
 /**
  * InvalidNumberStringError: thrown when a value is not a valid number string
  * 
+ * @extends ValidationError
+ * 
  * @param {string} field The name of the field that was invalid
  * 
  * @example
  * throw new InvalidNumberStringError('id');
  * // InvalidNumberStringError: Id must be a valid number string
  */
-class InvalidNumberStringError extends Error {
+class InvalidNumberStringError extends ValidationError {
     constructor(field) {
         super(`Invalid number string for ${field}`);
         this.name = 'InvalidNumberStringError';
@@ -92,6 +113,8 @@ class InvalidNumberStringError extends Error {
  * EmptyValueError: thrown when a required value is empty
  * Especially useful for fields with a minimum length of 1
  * 
+ * @extends ValidationError
+ * 
  * @param {string} field The name of the field that was empty
  * 
  * @example
@@ -99,7 +122,7 @@ class InvalidNumberStringError extends Error {
  * // EmptyValueError: Title must not be empty
  * 
  */
-class EmptyValueError extends Error {
+class EmptyValueError extends ValidationError {
   constructor(field) {
     super(`${field.charAt(0).toUpperCase() + field.slice(1)} must not be empty`);
     this.name = 'EmptyValueError';
@@ -109,6 +132,8 @@ class EmptyValueError extends Error {
 /**
  * MaxValueError: thrown when a value is greater than a maximum value
  * 
+ * @extends ValidationError
+ * 
  * @param {string} field The name of the field that was invalid
  * @param {number} maxValue The maximum value allowed for the field
  * 
@@ -116,7 +141,7 @@ class EmptyValueError extends Error {
  * throw new MaxValueError('title', 100);
  * // MaxValueError: Title must not be greater than 100
  */
-class MaxValueError extends Error {
+class MaxValueError extends ValidationError {
   constructor(field, maxValue) {
     super(`${field.charAt(0).toUpperCase() + field.slice(1)} must not be greater than ${maxValue}`);
     this.name = 'ExceededValueError';
@@ -126,6 +151,8 @@ class MaxValueError extends Error {
 /**
  * MinValueError: thrown when a value is less than a minimum value
  * 
+ * @extends ValidationError
+ * 
  * @param {string} field The name of the field that was invalid
  * @param {number} minValue The minimum value allowed for the field
  * 
@@ -133,49 +160,20 @@ class MaxValueError extends Error {
  * throw new MinValueError('title', 100);
  * // MinValueError: Title must not be less than 100
  */
-class MinValueError extends Error {
+class MinValueError extends ValidationError {
   constructor(field, minValue) {
     super(`${field.charAt(0).toUpperCase() + field.slice(1)} must not be less than ${minValue}`);
     this.name = 'MinValueError';
   }
 } 
 
-/**
- * NotFoundError: thrown when a database record is not found
- * 
- * @example
- * throw new NotFoundError();
- * // NotFoundError: record was not found
- */
-class NotFoundError extends Error {
-    constructor() {
-        super(`record was not found`);
-        this.name = 'NotFoundError';
-    }
-};
-
-/** 
- * ServerError: thrown when there is a server error
- * 
- * @example
- * throw new ServerError();
- * // ServerError: Server error
- */
-class ServerError extends Error {
-    constructor() {
-        super('Server error');
-        this.name = 'ServerError';
-    }
-};
-
 module.exports = {
+    ValidationError,
     UndefinedError,
     TypeError,
     NotIntegerError,
     InvalidNumberStringError,
     EmptyValueError,
     MaxValueError,
-    MinValueError,
-    NotFoundError,
-    ServerError,
+    MinValueError
 };
