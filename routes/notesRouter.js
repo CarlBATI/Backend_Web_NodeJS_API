@@ -81,4 +81,28 @@ notesRouter.put('/notes/:id', async (req, res) => {
     }
 });
 
+// DELETE route for deleting a note by its ID
+notesRouter.delete('/notes/:id', async (req, res) => {
+    const { id } = req.params;
+    const conn = await getConnection();
+    try {
+        const deleted = await deleteNoteById(id);
+        if (deleted) {
+            res.status(204).send();
+        } else {
+            res.status(404).send('Note not found');
+        }
+    } catch (err) {
+        if (err instanceof NotFoundError) {
+            res.status(404).send(err.message);
+        } else if(err instanceof ValidationError) {
+            res.status(400).send(err.message);
+        } else {
+            res.status(500).send('Server error');
+        }
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
 module.exports = notesRouter;

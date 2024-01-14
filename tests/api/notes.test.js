@@ -1,8 +1,13 @@
-// Tests for the notes API
-// Note: these tests will fail if the database is not running
+// Tests for the notes API:
+// 
+// Note: 
+// These tests will fail if the database is not running.
+// The POST /notes route must be tested first because the other tests rely on it.
+// The tests in this file do not clean up after themselves.
+
 const request = require('supertest');
 const express = require('express');
-const notesRouter = require('../../routes/notes');
+const notesRouter = require('../../routes/notesRouter');
 
 const app = express();
 app.use(express.json());
@@ -280,6 +285,45 @@ describe('PUT /notes/:id', () => {
         const postResponse = await request(app).post('/notes').send(newNote);
         const noteId = Number(postResponse.body.id);
         const response = await request(app).put(`/notes/${noteId}`);
+
+        expect(response.statusCode).toBe(400);
+    });
+});
+
+/**
+ * Test route for DELETE /api/notes/:id
+ */
+describe('DELETE /notes/:id', () => {
+    it('should delete a note with the given id and return a status code 204', async () => {
+        const newNote = { title, content };
+        const postResponse = await request(app).post('/notes').send(newNote);
+        
+        const noteId = Number(postResponse.body.id);
+        const deleteResponse = await request(app).delete(`/notes/${noteId}`);
+
+        expect(deleteResponse.statusCode).toBe(204);
+    });
+    it('should return 404 if the note does not exist', async () => {
+        const nonExistentId = '1234567890';
+        const response = await request(app).delete(`/notes/${nonExistentId}`);
+
+        expect(response.statusCode).toBe(404);
+    });
+    it('should return 400 if the id is not an integer', async () => {
+        const nonIntegerId = 'abc';
+        const response = await request(app).delete(`/notes/${nonIntegerId}`);
+
+        expect(response.statusCode).toBe(400);
+    });
+    it('should return 400 if the id is not valid', async () => {
+        const nonPositiveIntegerId = '-1';
+        const response = await request(app).delete(`/notes/${nonPositiveIntegerId}`);
+
+        expect(response.statusCode).toBe(400);
+    });
+    it('should return 400 if the id is 0', async () => {
+        const zeroId = '0';
+        const response = await request(app).delete(`/notes/${zeroId}`);
 
         expect(response.statusCode).toBe(400);
     });

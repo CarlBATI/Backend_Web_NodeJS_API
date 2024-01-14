@@ -128,9 +128,13 @@ async function updateNoteById(id, title, content) {
 }
 
 async function deleteNoteById(id) {
+    validateId(id);
+
     const conn = await getConnection();
     try {
-        const [result] = await conn.query('DELETE FROM Notes WHERE id = ?', [id]);
+        const result = await conn.query('DELETE FROM Notes WHERE id = ?', [id]);
+        console.log(result);
+        
         return result.affectedRows > 0;
     } finally {
         if (conn) conn.release();

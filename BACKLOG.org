@@ -110,9 +110,9 @@ Route: routes/notesRouter.js
 **** [X] Create Service
 **** [X] Create Test
 **** [X] Test Success
-*** [ ] DELETE /api/notes: Delete
-**** [ ] Create Route
-**** [ ] Create Service
-**** [ ] Create Test
-**** [ ] Test Success
+*** [X] DELETE /api/notes: Delete
+**** [X] Create Route
+**** [X] Create Service
+**** [X] Create Test
+**** [X] Test Success
 ** [ ] 2
