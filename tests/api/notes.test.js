@@ -288,6 +288,28 @@ describe('PUT /notes/:id', () => {
 
         expect(response.statusCode).toBe(400);
     });
+    it('should update the modified_at timestamp when a note is updated', async () => {
+        const newNote = { title, content };
+        const postResponse = await request(app).post('/notes').send(newNote);
+        const noteId = Number(postResponse.body.id);
+
+        // Fetch the note after it's created
+        const getResponseBeforeUpdate = await request(app).get(`/notes/${noteId}`);
+        const timestampBeforeUpdate = new Date(getResponseBeforeUpdate.body.modified_at);
+
+        // Wait for 1 second to ensure the timestamp will be different
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const updatedNote = { title: 'Updated Title', content: 'Updated Content' };
+        await request(app).put(`/notes/${noteId}`).send(updatedNote);
+
+        // Fetch the note after it's updated
+        const getResponseAfterUpdate = await request(app).get(`/notes/${noteId}`);
+        const timestampAfterUpdate = new Date(getResponseAfterUpdate.body.modified_at);
+
+        // The modified_at timestamp should be different after the note is updated
+        expect(timestampAfterUpdate).not.toEqual(timestampBeforeUpdate);
+    });
 });
 
 /**

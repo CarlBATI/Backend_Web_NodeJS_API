@@ -116,7 +116,7 @@ async function updateNoteById(id, title, content) {
 
     const conn = await getConnection();
     try {
-        const result = await conn.query('UPDATE Notes SET title = ?, content = ? WHERE id = ?', [title, content, id]);
+        const result = await conn.query('UPDATE Notes SET title = ?, content = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ?', [title, content, id]);
         if (result.affectedRows === 0) {
             throw new NotFoundError();
         }
@@ -141,10 +141,35 @@ async function deleteNoteById(id) {
     }
 }
 
+/**
+ * Delete notes by their IDs
+ * 
+ * @param {Array<number>} ids - An array of note IDs
+ * 
+ * @throws {Error} Will throw an error if the value does not meet the validation criteria
+ * @throws {NotFoundError} Will throw a NotFoundError if the note is not found
+ * @throws {ValidationError} Will throw a ValidationError if the value does not meet the validation criteria
+ * 
+ * @returns {Promise<boolean>} A promise that resolves to true if the notes were deleted successfully
+ * 
+ * @example
+ * const result = await deleteNotesByIds([1, 2]);
+ * console.log(result);
+ * // true
+ * 
+ * @example
+ * const result = await deleteNotesByIds([999]);
+ * // NotFoundError: record was not found
+ * 
+ * @example
+ * const result = await deleteNotesByIds(['1', '2']);
+ * // ValidationError: id must be a number
+ */
 async function deleteNotesByIds(ids) {
     const conn = await getConnection();
     try {
-        const [result] = await conn.query('DELETE FROM Notes WHERE id IN (?)', [ids]);
+        const result = await conn.query('DELETE FROM Notes WHERE id IN (?)', [ids]);
+        console.log(result);
         return result.affectedRows > 0;
     } finally {
         if (conn) conn.release();

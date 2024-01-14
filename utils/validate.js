@@ -1,4 +1,4 @@
-const { UndefinedError, TypeError, NotIntegerError, InvalidNumberStringError, EmptyValueError, MaxValueError, MinValueError } = require('../utils/errors/validation.errors');
+const { UndefinedError, TypeError, NotIntegerError, InvalidNumberStringError, EmptyValueError, MaxValueError, MinValueError, ValidationError } = require('../utils/errors/validation.errors');
 
 /** 
  * Validate a string value
@@ -40,6 +40,10 @@ function validateString(field, value, maxLength = null, minLength = null) {
 /**
  * Validate a valid ID
  * Can be a number or a numeric string.
+ * This is important because MariaDB and MySQL return numeric strings for ID values.
+ * This is due to the fact that JavaScript cannot handle 64-bit integers.
+ * It is also important because the ID value is passed in the URL as a string.
+ * This function will validate both strings and numbers.
  * 
  * @param {string|number} id - The ID to validate
  * 

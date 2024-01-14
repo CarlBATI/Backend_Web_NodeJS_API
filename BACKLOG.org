@@ -11,7 +11,7 @@ This API aims to provide a comprehensive suite of text-based services designed t
 ** [X] Make ~app.js~
 ** [X] Make npm script ~start~
 * [X] Database
-** [ ] Create ERD
+** [X] Create ERD
 #+begin_src plantuml
 @startuml
 skinparam dpi 300
@@ -36,33 +36,15 @@ entity "Sources" as S {
         title
 }
 
-
-entity "TrainingSet" as TS {
-        ,* date,
-        ,* reps
-        ,* weight
-        ,* rpe/rir
-        performed_at
-        note
-}
-
-
-entity "TrainingTags" as TT {
-        ,*tag
-        ,* color
-}
-
 N}o--o{N
 C||--o{T
 N}o--o{T
 N}o--o{S
-
-TS}o--o{TT
 @enduml
 #+end_src
 
 #+RESULTS:
-[[file:/tmp/babel-NGp4Ir/plantuml-0dfRJg.png]]
+[[file:/tmp/babel-kSG3bJ/plantuml-0ZtHN4.png]]
 
 ** [X] Create Batabase
 #+begin_src sql
@@ -82,9 +64,14 @@ FLUSH PRIVILEGES;
 *** [X] Test Connection
 ** [ ] Setup Migration Tool
 Opted for Knex.js (~knex~) with ~mysql~ driver.
-*** [ ] Create Migrations
-**** [ ] Table Notes
-**** [ ] Table Tags
+*** [X] Create Migrations
+**** [X] Table ~notes~
+**** [ ] Table ~notes_notes~
+**** [X] Table ~colors~
+**** [X] Table ~tags~
+**** [X] Table ~note_tags~
+**** [X] Table ~sources~
+**** [X] Table ~notes_sources~
 * [ ] Write README.md
 * [ ] CRUD Interfaces
 ** [X] Make First Route: ~routes/notes.js~ POST
@@ -94,13 +81,18 @@ Route: routes/notesRouter.js
 - Using ~jest~ as testing framework
 - Using ~upertest~
 *** [X] Run First Test: ~routes/notes.js~ POST
-** [ ] 1 Notes API CRUD Interface
+** [X] 1 Notes API CRUD Interface
 *** [X] POST /api/notes: Create
 **** [X] Create Route
 **** [X] Create Service
 **** [X] Create Test
 **** [X] Test Success
-*** [X] GET /api/notes and /api/notes/{id}: Read
+*** [X] GET /api/notes and /api/notes/{id}: Read 1 item
+**** [X] Create Route
+**** [X] Create Service
+**** [X] Create Test
+**** [X] Test Success
+*** [X] GET /api/notes and /api/notes/{id}: Read all items
 **** [X] Create Route
 **** [X] Create Service
 **** [X] Create Test
@@ -110,9 +102,15 @@ Route: routes/notesRouter.js
 **** [X] Create Service
 **** [X] Create Test
 **** [X] Test Success
-*** [X] DELETE /api/notes: Delete
+*** [X] DELETE /api/notes/{id}: Delete
+**** [X] Create Route
+**** [X] Create Service
+**** [X] Create Test
+**** [X] Test Success
+*** [X] DELETE /api/notes/{id}: Delete multiple items
 **** [X] Create Route
 **** [X] Create Service
 **** [X] Create Test
 **** [X] Test Success
 ** [ ] 2
+* [ ] Task requires not accpting numeric values as string. Decide if stringToNumber validation is enough.
