@@ -1,6 +1,5 @@
 const dotenv = require('dotenv');
 const express = require('express');
-const { getConnection } = require('./database/connection');
 // Routes
 const notesRouter = require('./routes/notes');
 
