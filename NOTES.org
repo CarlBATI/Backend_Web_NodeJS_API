@@ -1,0 +1,13 @@
+#+title: Notes
+
+* Knex Migrations
+To rollback all migrations and then rerun them, you can use the `knex migrate:rollback` command with the `--all` flag to rollback all migrations, and then use the `knex migrate:latest` command to run all migrations. Here's how you can do it:
+
+#+begin_src shell
+npx knex migrate:rollback --all
+npx knex migrate:latest
+#+end_src
+
+The `~knex migrate:rollback --all~` command rolls back all migrations, and the `~knex migrate:latest~` command runs all migrations.
+
+Please note that you need to be in the root directory of your project where the `knexfile.js` is located when you run these commands. Also, make sure that your `knexfile.js` is correctly configured with your database information.
