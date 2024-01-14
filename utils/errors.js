@@ -67,17 +67,15 @@ class MinValueError extends Error {
 } 
 
 /**
- * NotFoundError: thrown when a value is not found
- * 
- * @param {string} field The name of the field that was not found
+ * NotFoundError: thrown when a database record is not found
  * 
  * @example
- * throw new NotFoundError('title');
- * // NotFoundError: Title was not found
+ * throw new NotFoundError();
+ * // NotFoundError: record was not found
  */
 class NotFoundError extends Error {
-    constructor(field) {
-        super(`${field.charAt(0).toUpperCase() + field.slice(1)} was not found`);
+    constructor() {
+        super(`record was not found`);
         this.name = 'NotFoundError';
     }
 }
