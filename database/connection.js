@@ -8,18 +8,24 @@ const pool = mariadb.createPool({
     user: process.env.DB_USER, 
     password: process.env.DB_PASSWORD, 
     database: process.env.DB_NAME,
-    connectionLimit: 5
+    connectionLimit: 100
 });
 
 async function getConnection() {
     let conn;
     try {
         conn = await pool.getConnection();
-        console.log("Successfully connected to MariaDB");
+        console.log("Total connections: ", pool.totalConnections());
+        console.log("Active connections: ", pool.activeConnections());
+        console.log("Idle connections: ", pool.idleConnections());
         return conn;
     } catch (err) {
         console.error("Error connecting to MariaDB: ", err);
     }
 }
 
-module.exports = { getConnection };
+async function closePool() {
+    await pool.end();
+}
+
+module.exports = { getConnection, closePool };
