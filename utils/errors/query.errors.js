@@ -33,7 +33,24 @@ class NotFoundError extends QueryError {
     }
 };
 
+/**
+ * DuplicateEntryError: thrown when a database record is not found
+ * 
+ * @extends QueryError
+ * 
+ * @example
+ * throw new DuplicateEntryError();
+ * // DuplicateEntryError: duplicate entry
+ */
+class DuplicateEntryError extends QueryError {
+    constructor() {
+        super(`duplicate entry`);
+        this.name = 'DuplicateEntryError';
+    }
+}
+
 module.exports = {
     QueryError,
     NotFoundError,
+    DuplicateEntryError,
 }
