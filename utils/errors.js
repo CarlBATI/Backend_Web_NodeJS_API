@@ -1,4 +1,25 @@
 /**
+ * Custom error classes
+ * Basic Errors with custom names and messages
+ */
+
+/**
+ * UndefinedError: thrown when a value is undefined
+ * 
+ * @param {string} field The name of the field that was undefined
+ * 
+ * @example
+ * throw new UndefinedError('title');
+ * // UndefinedError: Title is undefined
+ */
+class UndefinedError extends Error {
+    constructor(field,) {
+        super(field + ' is undefined');
+        this.name = 'UndefinedError';
+    }
+}
+
+/**
  * TypeError: thrown when a value is not of the expected type
  * 
  * @param {string} field The name of the field that was invalid
@@ -16,7 +37,24 @@ class TypeError extends Error {
 }
 
 /**
+ * NoIntegerError: thrown when a value is not an integer
+ * 
+ * @param {string} field The name of the field that was invalid
+ * 
+ * @example
+ * throw new NoIntegerError('id');
+ * // NoIntegerError: Id must be an integer
+ */
+class NoIntegerError extends Error {
+    constructor(field) {
+        super(`${field.charAt(0).toUpperCase() + field.slice(1)} must be an integer`);
+        this.name = 'NoIntegerError';
+    }
+};
+
+/**
  * EmptyValueError: thrown when a required value is empty
+ * Especially useful for fields with a minimum length of 1
  * 
  * @param {string} field The name of the field that was empty
  * 
@@ -95,7 +133,9 @@ class ServerError extends Error {
 }
 
 module.exports = {
+    UndefinedError,
     TypeError,
+    NoIntegerError,
     EmptyValueError,
     MaxValueError,
     MinValueError,
