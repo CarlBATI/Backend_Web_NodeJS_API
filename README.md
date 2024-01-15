@@ -1,61 +1,121 @@
-Project 2 - Node.js
-Inleverdatum maandag om 23:59 Punten 30 Inleveren een bestandsupload Bestandstypen zip en 7z Beschikbaar tot 15 jan op 23:59
-Content
-For this project you will have to build an API using Node.js. To clarify: we are talking about a dynamic API, so one that will store and read data dynamically from a database to persistently save information. A static page will not suffice!
+# Backend Web API
 
-It is not allowed to just copy/paste an online tutorial to finish this project, but you are allowed to use them as a basis for your own website if you:
-- understand the code you are using and can explain what it does in your own words
-- you correctly cite your sources
+This repository contains the Backend Web API created for the Backend Web class. The API provides endpoints for managing notes and tags, allowing users to perform CRUD (Create, Read, Update, Delete) operations.
 
- 
+## Table of Contents
 
-You are free to choose the type of API that you build, for example for the small business of your parents, a local sports club, music festival, video game, ... As long as it meets the standards described in this assignment. If you wish, you can use the same database and tables as your Laravel project.
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Running Migrations](#running-migrations)
+- [Running Tests](#running-tests)
+- [API Documentation](#api-documentation)
+- [Issues](#issues)
+- [Contributing](#contributing)
+- [License](#license)
 
-Functional minimum requirements
-As the name indicates, these requirements are the minimum features that need to be present.
+## Technologies Used
 
-You have an API with at least the following features:
+- Node.js
+- Express.js
+- MariaDB/MySQL
+- Knex.js (Query Builder)
+- Jest (Testing Framework)
+- Supertest (HTTP assertions)
 
-Two default CRUD interfaces, meaning that for 2 entities (such as news post, comment, ...) you can
-Create a new instance of it in the database
-Update an existing instance with new data
-Delete records
-Return a list of all the records
-Basic validation
-Fields submitted to the API cannot be empty where logical (for example, you might not need to fill in both a mobile phone number at a landline)
-Numeric fields cannot accept string
-A first name cannot contain numbers
-... 
-One instance of returning values with a limit and offset
-One instance of returning values after you have searched for a value on one field
-Extra requirements
-If you perfectly implement every single minimal requirement you will get a passing grade for the project. If you wish to excel in your result, you can add extra features to your API. Below you can find a list of example features you can add:
+## Getting Started
 
-Advanced validation, going beyond simple requirements such as values being blank or not. For example, an "end date" needs to be after a "start date", a phone number needs to be formatted like '+32 444 44 44 44', ...
-Advanced search, on more than one field
-Advanced sorting
-Limiting results to authenticated users
-...
-If you're unsure about how good a feature might be, feel free to ask the teacher.
+### Prerequisites
 
-Technical requirements
-Aside from the functional requirements, there are a few guidelines for the technical aspect of the project as well:
+Before you begin, ensure you have the following installed on your machine:
 
-You are free to choose which type of database you want to use and are not limited to MySQL or mongodb
-You can choose to either use the built-in http module or use express
-You need to use the proper HTTP verb for the endpoints, for example
-GET for read-only access to a resource
-POST to create a new instance
-PUT to update an existing instance
-...
-GIT
-The use of git is required. Remember to commit often and to add logical commit messages. This allows me to follow along with your progress, but it also provides you with a fallback when something does go wrong with your code.
+- Node.js: [Download and Install Node.js](https://nodejs.org/)
+- MariaDB or MySQL: [Download and Install MariaDB](https://mariadb.com/kb/en/getting-installing-and-upgrading-mariadb/)
 
-Important: add the 'node-modules' folder to your .gitignore file.
+### Installation
 
-Add a link to your GitHub repo for this project to your "readme" file.
+1. Clone the repository:
 
-Submitting
-Aside from the GitHub repo, you'll also have to submit a .zip of your project on Canvas. You name your file: bw_firstname_lastname_node.zip. In the zip you will delete the node-modules folder. 
+   ```bash
+   git clone https://github.com/CarlBATI/Backend_Web_NodeJS_API.git
+   ```
 
-Handing in too late will result in a 0. I only accept submissions through Canvas. Canvas not working because you try to submit your project at the very last minute is not an excuse for handing in too late.
+2. Navigate to the project directory:
+
+   ```bash
+   cd Backend_Web_NodeJS_API
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Create a `.env` file in the root directory and configure it with the following environment variables:
+
+   ```
+   DB_HOST=host
+   DB_USER=user
+   DB_PASSWORD=password
+   DB_NAME=name
+   ```
+
+   Replace `host`, `user`, `password` and `name` with your mariadb credentials.
+
+## Running Migrations
+
+To run database migrations and set up the initial schema, use the following command:
+
+```bash
+npm run migrate
+```
+
+## Running Tests
+
+To run tests, use the following command:
+
+```bash
+npm test
+# or 
+npx jest /path/to/test
+```
+
+**Note:** If running all tests at once encounters issues, try running each test separately:
+
+*Due to an issue with open operations running all tests together results in some tests failing.*
+
+```bash
+npx jest test/notes.test.js
+npx jest test/tags.test.js
+```
+
+## API Documentation
+
+The API provides the following endpoints:
+
+- **Notes API:**
+  - Create a new note
+  - Retrieve all notes
+  - Retrieve a note by ID
+  - Update a note by ID
+  - Delete a note by ID
+
+  API Base URL: `/api/notes`
+
+- **Tags API:**
+  - Create a new tag
+  - Retrieve all tags
+  - Retrieve a tag by ID
+
+  API Base URL: `/api/tags`
+
+For detailed API documentation, refer to the [API Documentation](DOCUMENTATION.md) section in this repository.
+## Issues
+
+If you encounter any issues or have suggestions, please [open an issue](https://github.com/your-username/backend-web-api/issues).
+
+## Contributing
+
+Contributions are welcome! Feel free to open a pull request or contribute to the ongoing discussions in the [issues](https://github.com/your-username/backend-web-api/issues) section.
