@@ -1,4 +1,5 @@
 // Tests utilities
+// This file includes utilities for testing routes
 // ========================================================
 
 // Dependencies
@@ -144,7 +145,6 @@ async function testGetMalformedArg(server, path, verbose = false) {
  * Test getting multiple objects - GET
  * Requires the POST route to be tested first
  * Requires the POST and GET routes to have the same path
- * 
  * Only works on empty tables
  * 
  * @param {object} app - The server to send the request to
@@ -187,11 +187,53 @@ async function testGetMultipleObjects(server, path, newObjects, verbose = false)
     }
 }
 
+/** 
+ * testUpdateObject
+ * 
+ * @param {object} server - The server to send the request to
+ * @param {string} path - The path to send the request to. This path should be the same for POST and PUT.
+ * @param {object} newObject - The object to send in the request body. Must have all required properties.
+ * @param {object} updatedObject - The object to send in the request body. Must have all required properties.
+ * @param {boolean} verbose - Whether to log a message with the response status and body to the console
+ * 
+ * @returns {Promise} - A promise that resolves to the response from the server
+ * 
+ * @throws {Error} - An error if the response status code is not 200
+ * @throws {Error} - An error if the response body does not have an id property
+ * @throws {Error} - An error if the response body does not have the correct properties
+ * 
+ * @example
+ * const path = '/tags';
+ * const newObject = { name: 'Test Tag' };
+ * const updatedObject = { name: 'Updated Tag' };
+ * await testUpdateObject(app, path, newObject, updatedObject);
+ */
+async function testPutSingleObject(server, path, newObject, updatedObject, verbose = false) {
+    const postResponse = await request(server).post(path).send(newObject);
+    const objectId = Number(postResponse.body.id);
+
+    const putResponse = await request(server).put(`${path}/${objectId}`).send(updatedObject);
+
+    expect(putResponse.statusCode).toBe(200);
+    expect(putResponse.body).toHaveProperty('id');
+    expect(putResponse.body.id).toBe(objectId);
+    for (let key in updatedObject) {
+        // skip the id property
+        if (key === 'id') continue;
+        expect(putResponse.body[key]).toBe(updatedObject[key]);
+    }
+
+    if (verbose) {
+        console.log(`POST created object: ${newObject} with id: ${objectId}\nPUT ${path}/${objectId} test with status: ${putResponse.status}\nSent object: ${JSON.stringify(updatedObject, null, 2)}\nResponse: ${JSON.stringify(putResponse.body, null, 2)}`);
+    }
+}
+
 module.exports = {
     testPostCreation,
     testPostBadRequest,
     testGetSingleObjectById,
     testGetNonExistentObject,
     testGetMalformedArg,
-    testGetMultipleObjects
+    testGetMultipleObjects,
+    testPutSingleObject
 };
