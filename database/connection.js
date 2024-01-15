@@ -45,12 +45,6 @@ async function query(sql, params) {
     }
 }
 
-module.exports = {
-    getConnection,
-    closePool,
-    query
-};
-
 /**
  * Close the connection pool.
  * 
@@ -59,7 +53,11 @@ module.exports = {
  * @returns {Promise<void>} A Promise that resolves when the pool has been closed.
  */
 async function closePool() {
-    await pool.end();
+    try {
+        await pool.end();
+    } catch (err) {
+        console.error("Error closing MariaDB pool: ", err);
+    }
 }
 
 /**
@@ -72,4 +70,10 @@ async function consoleLogPoolStats() {
     console.log("Idle connections: ", pool.idleConnections());
 }
 
-module.exports = { getConnection, query,  closePool, consoleLogPoolStats };
+module.exports = { 
+    pool,
+    getConnection, 
+    query,  
+    closePool, 
+    consoleLogPoolStats,
+};
