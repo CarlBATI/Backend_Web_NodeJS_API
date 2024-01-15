@@ -57,9 +57,6 @@ async function testPostCreation(server, path, object, properties, verbose = fals
 async function testPostDuplicateEntry(server, path, object, verbose = false) {
     const firstResponse = await request(server).post(path).send(object);
     const duplicateResponse = await request(server).post(path).send(object);
-    console.log('RESPONSES')
-    console.log(`firstResponse: ${JSON.stringify(firstResponse.body, null, 2)}`);
-    console.log(`duplicateResponse: ${JSON.stringify(duplicateResponse.body, null, 2)}`);
 
     expect(duplicateResponse.statusCode).toBe(409);
     if (verbose) {
