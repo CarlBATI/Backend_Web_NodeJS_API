@@ -6,7 +6,7 @@ const { ValidationError } = require('../utils/errors/validation.errors');
 const { NotFoundError } = require('../utils/errors/query.errors');
 
 // POST route for creating a new note
-notesRouter.post('/notes', async (req, res) => {
+notesRouter.post('/', async (req, res) => {
     const { title, content } = req.body;
     
     const conn = await getConnection();
@@ -26,7 +26,7 @@ notesRouter.post('/notes', async (req, res) => {
 });
 
 // GET route for retrieving all notes
-notesRouter.get('/notes', async (req, res) => {
+notesRouter.get('/', async (req, res) => {
     const conn = await getConnection();
     try {
         const notes = await readNotes();
@@ -40,7 +40,7 @@ notesRouter.get('/notes', async (req, res) => {
 });
 
 // GET route for retrieving a note by its ID
-notesRouter.get('/notes/:id', async (req, res) => {
+notesRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const note = await readNoteById(id);
@@ -61,7 +61,7 @@ notesRouter.get('/notes/:id', async (req, res) => {
 });
 
 // PUT route for updating a note by its ID
-notesRouter.put('/notes/:id', async (req, res) => {
+notesRouter.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
     const conn = await getConnection();
@@ -82,7 +82,7 @@ notesRouter.put('/notes/:id', async (req, res) => {
 });
 
 // DELETE route for deleting a note by its ID
-notesRouter.delete('/notes/:id', async (req, res) => {
+notesRouter.delete('/:id', async (req, res) => {
     const { id } = req.params;
     const conn = await getConnection();
     try {
