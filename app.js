@@ -18,9 +18,9 @@ const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
 
 // Start the server
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`App listening at http://${host}:${port}`);
 });
 
 // Export the app
-module.exports = app;
+module.exports = server;

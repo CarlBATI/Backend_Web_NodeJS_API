@@ -8,10 +8,12 @@ const { getConnection } = require('../database/connection');
 const { validateString, validateId } = require('../utils/validate');
 const { NotFoundError } = require('../utils/errors/query.errors');
 const { ValidationError } = require('../utils/errors/validation.errors');
+const { readTagById } = require('./tagsService');
 
 // Constants
 //---------------------------------------------------------------------------------------------
 const NOTES_TABLE = 'Notes';
+const NOTES_TAGS_TABLE = 'Notes_Tags';
 const NOTE_TITLE_MAX_LENGTH = 100;
 const NOTE_TITLE_MIN_LENGTH = 1;
 const NOTE_CONTENT_MAX_LENGTH = 10000;
@@ -145,7 +147,6 @@ async function deleteNoteById(id) {
     const conn = await getConnection();
     try {
         const result = await conn.query(`DELETE FROM ${NOTES_TABLE} WHERE id = ?`, [id]);
-        console.log(result);
         
         return result.affectedRows > 0;
     } finally {
@@ -181,8 +182,36 @@ async function deleteNotesByIds(ids) {
     const conn = await getConnection();
     try {
         const result = await conn.query(`DELETE FROM ${NOTES_TABLE} WHERE id IN (?)`, [ids]);
-        console.log(result);
         return result.affectedRows > 0;
+    } finally {
+        if (conn) conn.release();
+    }
+}
+
+/**
+ * Add tags to a note by note ID and tag IDs
+ * 
+ * @param {number} noteId - The ID of the note
+ * @param {Array<number>} tagIds - An array of tag IDs
+ * 
+ * @throws {NotFoundError} Will throw a NotFoundError if the note is not found
+ * @throws {ValidationError} Will throw a ValidationError if the value does not meet the validation criteria
+ * 
+ * @returns {Promise<object>} A promise that resolves to the result of the query
+ */
+async function addTagsToNoteById(noteId, tagIds) {
+    validateId(noteId);
+    validateId(tagIds);
+
+    // check if note exists, if not throw error: NotFoundError
+    readNoteById(noteId);
+    // check if tags exist, if not throw error: NotFoundError
+    readTagById(tagIds);
+
+    const conn = await getConnection();
+    try {
+        const result = await conn.query(`INSERT INTO ${NOTES_TAGS_TABLE} (note_id, tag_id) VALUES (?, ?)`, [noteId, tagIds]);
+        return result;
     } finally {
         if (conn) conn.release();
     }
