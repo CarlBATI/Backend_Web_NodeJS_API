@@ -4,7 +4,7 @@
 
 // Imports
 const { query, closePool } = require('./connection');
-const { NOTE_TABLE_NAME } = require('../database/models/Notes')
+const { NOTES_TABLE_NAME } = require('../database/models/Notes')
 const { TAGS_TABLE_NAME } = require('../database/models/Tags')
 const { NOTES_TAGS_TABLE_NAME } = require('../database/models/NotesTags')
 
@@ -16,7 +16,7 @@ const { NOTES_TAGS_TABLE_NAME } = require('../database/models/NotesTags')
  */
 async function clearDatabase(verbose = false) {
     // The order of the tables is important because of foreign key constraints
-    const tables = [NOTES_TAGS_TABLE_NAME, NOTE_TABLE_NAME, TAGS_TABLE_NAME];
+    const tables = [NOTES_TAGS_TABLE_NAME, NOTES_TABLE_NAME, TAGS_TABLE_NAME];
 
     try {
         // Delete all records from each table

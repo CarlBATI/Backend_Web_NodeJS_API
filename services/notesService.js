@@ -9,14 +9,14 @@ const { validateString, validateId } = require('../utils/validate');
 const { NotFoundError } = require('../utils/errors/query.errors');
 const { ValidationError } = require('../utils/errors/validation.errors');
 const { readTagById } = require('./tagsService');
-
-// Constants
+// Globals
 //---------------------------------------------------------------------------------------------
-const NOTES_TABLE = 'Notes';
-const NOTES_TAGS_TABLE = 'Notes_Tags';
-const NOTE_TITLE_MAX_LENGTH = 100;
-const NOTE_TITLE_MIN_LENGTH = 1;
-const NOTE_CONTENT_MAX_LENGTH = 10000;
+const {
+    NOTES_TABLE_NAME,
+    NOTES_TITLE_MAX_LENGTH,
+    NOTES_TITLE_MIN_LENGTH,
+    NOTES_CONTENT_MAX_LENGTH
+} = require('../database/models/Notes');
 
 /** 
  *  Create a new note with the specified title and content
@@ -35,8 +35,8 @@ const NOTE_CONTENT_MAX_LENGTH = 10000;
  */ 
 async function createNote(title, content) {
     try {
-        validateString('title', title, NOTE_TITLE_MAX_LENGTH, NOTE_TITLE_MIN_LENGTH);
-        validateString('content', content, NOTE_CONTENT_MAX_LENGTH);
+        validateString('title', title, NOTES_TITLE_MAX_LENGTH, NOTES_TITLE_MIN_LENGTH);
+        validateString('content', content, NOTES_CONTENT_MAX_LENGTH);
     } catch (err) {
         throw err;
     };
@@ -44,7 +44,7 @@ async function createNote(title, content) {
     // Create the note
     const conn = await getConnection();
     try {
-        const result = await conn.query(`INSERT INTO ${NOTES_TABLE} (title, content) VALUES (?, ?)`, [title, content]);
+        const result = await conn.query(`INSERT INTO ${NOTES_TABLE_NAME} (title, content) VALUES (?, ?)`, [title, content]);
         return { id: result.insertId.toString(), title, content };
     } catch (err) {
         throw err;
@@ -76,7 +76,7 @@ async function readNoteById(id) {
     validateId(id);
 
     const conn = await getConnection();
-    const rows = await conn.query(`SELECT * FROM ${NOTES_TABLE} WHERE id = ?`, [id]);
+    const rows = await conn.query(`SELECT * FROM ${NOTES_TABLE_NAME} WHERE id = ?`, [id]);
 
     // If the note is not found, throw an error
     if (rows.length === 0) {
@@ -104,7 +104,7 @@ async function readNoteById(id) {
 async function readNotes() {
     const conn = await getConnection();
     try {
-        const rows = await conn.query(`SELECT * FROM ${NOTES_TABLE}`);
+        const rows = await conn.query(`SELECT * FROM ${NOTES_TABLE_NAME}`);
         return rows;
     } finally {
         if (conn) conn.release();
@@ -125,16 +125,16 @@ async function readNotes() {
  */
 async function updateNoteById(id, title, content) {
     validateId(id);
-    validateString('title', title, NOTE_TITLE_MAX_LENGTH, NOTE_TITLE_MIN_LENGTH);
-    validateString('content', content, NOTE_CONTENT_MAX_LENGTH);
+    validateString('title', title, NOTES_TITLE_MAX_LENGTH, NOTES_TITLE_MIN_LENGTH);
+    validateString('content', content, NOTES_CONTENT_MAX_LENGTH);
 
     const conn = await getConnection();
     try {
-        const result = await conn.query(`UPDATE ${NOTES_TABLE} SET title = ?, content = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ?`, [title, content, id]);
+        const result = await conn.query(`UPDATE ${NOTES_TABLE_NAME} SET title = ?, content = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ?`, [title, content, id]);
         if (result.affectedRows === 0) {
             throw new NotFoundError();
         }
-        const [updatedNote] = await conn.query(`SELECT * FROM ${NOTES_TABLE} WHERE id = ?`, [id]);
+        const [updatedNote] = await conn.query(`SELECT * FROM ${NOTES_TABLE_NAME} WHERE id = ?`, [id]);
         return updatedNote;
     } finally {
         if (conn) conn.release();
@@ -146,7 +146,7 @@ async function deleteNoteById(id) {
 
     const conn = await getConnection();
     try {
-        const result = await conn.query(`DELETE FROM ${NOTES_TABLE} WHERE id = ?`, [id]);
+        const result = await conn.query(`DELETE FROM ${NOTES_TABLE_NAME} WHERE id = ?`, [id]);
         
         return result.affectedRows > 0;
     } finally {
@@ -181,7 +181,7 @@ async function deleteNoteById(id) {
 async function deleteNotesByIds(ids) {
     const conn = await getConnection();
     try {
-        const result = await conn.query(`DELETE FROM ${NOTES_TABLE} WHERE id IN (?)`, [ids]);
+        const result = await conn.query(`DELETE FROM ${NOTES_TABLE_NAME} WHERE id IN (?)`, [ids]);
         return result.affectedRows > 0;
     } finally {
         if (conn) conn.release();
