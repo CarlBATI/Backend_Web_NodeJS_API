@@ -1,18 +1,45 @@
+// app.js
+// The main entry point for the application
+// It starts the server and listens for connections
+// Exports the app for testing purposes
+//=========================================================
+
+// Dependencies
+//---------------------------------------------------------
 const dotenv = require('dotenv');
 const express = require('express');
-// Routes
+
 const notesRouter = require('./routes/notesRouter');
+const tagsRouter = require('./routes/tagsRouter');
+
+// Globals
+//---------------------------------------------------------
+const apiPath = '/api';
+const notesPath = '/notes';
+const tagsPath = '/tags';
+const combinedNotesPath = `${apiPath}${notesPath}`;
+const combinedTagsPath = `${apiPath}${tagsPath}`;
 
 // Load environment variables
 dotenv.config();
+
 // Create new express instance
 const app = express();
 
 // Middleware
+//---------------------------------------------------------
 app.use(express.json());
 
 // Routes
-app.use('/api', notesRouter);
+//---------------------------------------------------------
+// New Router
+const apiRouter = express.Router();
+// Add routes to router
+apiRouter.use('/notes', notesRouter);
+apiRouter.use('/tags', tagsRouter);
+
+// Add router to app
+app.use('/api', apiRouter);
 
 const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
@@ -23,4 +50,11 @@ const server = app.listen(port, () => {
 });
 
 // Export the app
-module.exports = server;
+module.exports = {
+    server,
+    apiPath,
+    notesPath,
+    tagsPath,
+    combinedNotesPath,
+    combinedTagsPath
+};
