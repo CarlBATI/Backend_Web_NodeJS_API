@@ -140,10 +140,58 @@ async function testGetMalformedArg(server, path, verbose = false) {
     }
 }
 
+/**
+ * Test getting multiple objects - GET
+ * Requires the POST route to be tested first
+ * Requires the POST and GET routes to have the same path
+ * 
+ * Only works on empty tables
+ * 
+ * @param {object} app - The server to send the request to
+ * @param {string} path - The path to send the request to
+ * 
+ * @returns {Promise} - A promise that resolves to the response from the server
+ * 
+ * @throws {Error} - An error if the response status code is not 200
+ * @throws {Error} - An error if the response body does not have an id property
+ * @throws {Error} - An error if the response body does not have the correct properties
+ * 
+ * @example
+ * const path = '/tags';
+ * const newObjects = [
+ *    { name: 'Test Tag 1' },
+ *    { name: 'Test Tag 2' },
+ *    { name: 'Test Tag 3' }
+ * ];
+ * await testGetMultipleObjects(path, newObjects);
+ */
+async function testGetMultipleObjects(server, path, newObjects, verbose = false) {
+    for (let object of newObjects) {
+        await request(server).post(path).send(object);
+    }
+
+    const response = await request(server).get(path);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0]).toHaveProperty('id');
+
+    for (let key in newObjects[0]) {
+        // skip the id property
+        if (key === 'id') continue;
+        expect(response.body[0]).toHaveProperty(key);
+    }
+
+    if (verbose) {
+        console.log(`Created: ${JSON.stringify(newObjects)}\nPOST objects to ${path}\nGET ${path} test with status: ${response.status}\nResponse: ${JSON.stringify(response.body, null, 2)}`);
+    }
+}
+
 module.exports = {
     testPostCreation,
     testPostBadRequest,
     testGetSingleObjectById,
     testGetNonExistentObject,
-    testGetMalformedArg
+    testGetMalformedArg,
+    testGetMultipleObjects
 };
