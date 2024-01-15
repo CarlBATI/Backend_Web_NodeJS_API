@@ -12,6 +12,7 @@
 const request = require('supertest');
 const express = require('express');
 const notesRouter = require('../../routes/notesRouter');
+const clearDatabase = require('../../database/clearDatabase');
 
 // Setup
 //--------------------------------------------------------
@@ -23,6 +24,14 @@ app.use('/', notesRouter);
 //--------------------------------------------------------
 const title = 'Test Title';
 const content = 'Test Content';
+
+beforeEach(async () => {
+    try {
+        await clearDatabase();
+    } catch (err) {
+        console.error('Failed to clear database before test:', err);
+    }
+});
 
 // Tests
 //--------------------------------------------------------
@@ -126,9 +135,7 @@ describe('Notes API', () => {
         it('should return a note with the given id', async () => {
             const newNote = { title, content };
             const postResponse = await request(app).post('/notes').send(newNote);
-            if (postResponse.body.id === undefined || postResponse.body.id === null) {
-            return;
-            }
+
             const noteId = Number(postResponse.body.id);
             const getResponse = await request(app).get(`/notes/${noteId}`);
         
@@ -138,8 +145,8 @@ describe('Notes API', () => {
             expect(getResponse.body.title).toBe(newNote.title);
             expect(getResponse.body.content).toBe(newNote.content);
         });
-    
-        // Only works if the database is not up to the point where it id 1234567890 exists
+
+        // Only works if the database is not up to the point where id 1234567890 exists
         it('should return 404 if the note does not exist', async () => {
             const nonExistentId = '1234567890';
             const response = await request(app).get(`/notes/${nonExistentId}`);
@@ -175,10 +182,24 @@ describe('Notes API', () => {
      */
     describe('GET /notes', () => {
         it('should return an array of notes', async () => {
+            const newNotes = [
+                { title: 'Test Title 1', content: 'Test Content 1' },
+                { title: 'Test Title 2', content: 'Test Content 2' },
+                { title: 'Test Title 3', content: 'Test Content 3' }
+            ];
+
+            for (let note of newNotes) {
+                await request(app).post('/notes').send(note);
+            }
+
             const response = await request(app).get('/notes');
         
             expect(response.statusCode).toBe(200);
             expect(response.body).toBeInstanceOf(Array);
+            expect(response.body.length).toBe(newNotes.length);
+            expect(response.body[0]).toHaveProperty('id');
+            expect(response.body[0]).toHaveProperty('title');
+            expect(response.body[0]).toHaveProperty('content');
         });
     });
     
