@@ -263,3 +263,5 @@ describe('Notes API', () => {
         });
     });
 });
+
+server.close();

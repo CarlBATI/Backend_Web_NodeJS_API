@@ -1,22 +1,30 @@
-// tagsService.js is service that handles all database calls for tags
-// ========================================================
+// ===================================================================|||
+// tagsService.js is service that handles all database calls for tags |||
+// ===================================================================|||
 
-// Dependencies
-// ========================================================
-const { getConnection, closePool } = require('../database/connection');
+//--------------||
+// Dependencies ||
+//--------------||
+const { getConnection } = require('../database/connection');
 const { ValidationError } = require('../utils/errors/validation.errors');
 const { NotFoundError, DuplicateEntryError } = require('../utils/errors/query.errors');
 const { validateString, validateId } = require('../utils/validate');
 const { DUPLICATE_KEY_ERROR_CODE } = require('../database/globals');
 
-// Constants
-// ========================================================
-const TAGS_TABLE = 'Tags';
-const TAG_NAME_MAX_LENGTH = 25;
-const TAG_NAME_MIN_LENGTH = 1;
+//---------||
+// Globals ||
+//---------||
 
-// Service functions
-// ========================================================
+const { 
+    TAGS_TABLE,
+    TAG_NAME_MAX_LENGTH,
+    TAG_NAME_MIN_LENGTH,
+    TAGS_TABLE_NAME,
+ } = require('../database/models/Tags');
+ 
+//------------------||
+// Service functions||
+//------------------||
 
 /**
  * Creates a new tag in the database
@@ -36,8 +44,8 @@ async function createTag(name) {
 
     const conn = await getConnection();
     try {
-        const insertResult = await conn.query(`INSERT INTO ${TAGS_TABLE} (name) VALUES (?)`, [name]);
-        const selectResult = await conn.query(`SELECT * FROM ${TAGS_TABLE} WHERE id = ?`, [insertResult.insertId]);
+        const insertResult = await conn.query(`INSERT INTO ${TAGS_TABLE_NAME} (name) VALUES (?)`, [name]);
+        const selectResult = await conn.query(`SELECT * FROM ${TAGS_TABLE_NAME} WHERE id = ?`, [insertResult.insertId]);
         return selectResult[0];
     } catch (err) {
         if (err.errno === DUPLICATE_KEY_ERROR_CODE) {
@@ -57,7 +65,7 @@ async function createTag(name) {
 async function readAllTags() {
     const conn = await getConnection();
     try {
-        const result = await conn.query(`SELECT * FROM ${TAGS_TABLE}`);
+        const result = await conn.query(`SELECT * FROM ${TAGS_TABLE_NAME}`);
         return result;
     } catch (err) {
         throw err;
@@ -81,10 +89,15 @@ async function readTagById(id) {
 
     const conn = await getConnection();
     try {
-        const result = await conn.query(`SELECT * FROM ${TAGS_TABLE} WHERE id = ?`, [id]);
+        const result = await conn.query(`SELECT * FROM ${TAGS_TABLE_NAME} WHERE id = ?`, [id]);
+        console.log('result of query:');
+        console.log(result);
         if (result.length === 0) {
             throw new NotFoundError();
         }
+        result[0].id = Number(result[0].id);
+        console.log('result after casting id to number:');
+        console.log(result[0]);
         return result[0];
     } catch (err) {
         throw err;
@@ -108,7 +121,7 @@ async function readTagByName(name) {
 
     const conn = await getConnection();
     try {
-        const result = await conn.query(`SELECT * FROM ${TAGS_TABLE} WHERE name = ?`, [name]);
+        const result = await conn.query(`SELECT * FROM ${TAGS_TABLE_NAME} WHERE name = ?`, [name]);
         if (result.length === 0) {
             throw new NotFoundError();
         }
@@ -135,7 +148,7 @@ async function deleteTagById(id) {
 
     const conn = await getConnection();
     try {
-        const result = await conn.query(`DELETE FROM ${TAGS_TABLE} WHERE id = ?`, [id]);
+        const result = await conn.query(`DELETE FROM ${TAGS_TABLE_NAME} WHERE id = ?`, [id]);
         if (result.affectedRows === 0) {
             throw new NotFoundError();
         }
@@ -162,7 +175,7 @@ async function deleteTagByName(name) {
 
     const conn = await getConnection();
     try {
-        const result = await conn.query(`DELETE FROM ${TAGS_TABLE} WHERE name = ?`, [name]);
+        const result = await conn.query(`DELETE FROM ${TAGS_TABLE_NAME} WHERE name = ?`, [name]);
         if (result.affectedRows === 0) {
             throw new NotFoundError();
         }
@@ -174,11 +187,10 @@ async function deleteTagByName(name) {
     }
 };
 
-// Module Exports
-// ========================================================
+//----------------||
+// Module Exports ||
+//----------------||
 module.exports = {
-    TAG_NAME_MAX_LENGTH,
-    TAG_NAME_MIN_LENGTH,
     createTag,
     readAllTags,
     readTagById,

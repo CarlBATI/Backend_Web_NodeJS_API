@@ -41,12 +41,16 @@ tagsRouter.get('/', async (req, res, next) => {
     }
 });
 
-// GET /tags/:id route for retrieving a tag by id
-tagsRouter.get('/:id', async (req, res, next) => {
+tagsRouter.get('/:id', async (req, res) => {
+    console.log(tagsRouter.name)
     const { id } = req.params;
     try {
-        const response = await readTagById(id);
-        res.status(200).json(response);
+        const note = await readTagById(id);
+        if (note) {
+            res.status(200).json(note);
+        } else {
+            res.status(404).send('Note not found');
+        }
     } catch (err) {
         if (err instanceof ValidationError) {
             res.status(400).send(err.message);

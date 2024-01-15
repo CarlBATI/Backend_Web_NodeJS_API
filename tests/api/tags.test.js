@@ -2,16 +2,32 @@
 //================================================================================================== 
 
 // Dependencies
-// ========================================================
-const server = require('../../app');
+//--------------------------------------------------------
 const request = require('supertest');
-const tagsRouter = require('../../routes/tagsRouter');
-const { MAX_TAG_NAME_LENGTH, MIN_TAG_NAME_LENGTH } = require('../../services/tagsService');
+const { server, combinedTagsPath, tagsPath  } = require('../../app');
+const { MAX_TAG_NAME_LENGTH, MIN_TAG_NAME_LENGTH } = require('../../database/models/Tags');
 const clearDatabase = require('../../database/clearDatabase');
 const { pool } = require('../../database/connection');
-
-// Setup
-// app.use('/', tagsRouter);
+const { 
+    testPostCreation,
+    testPostDuplicateEntry, 
+    testPostBadRequest, 
+    testGetSingleObjectById, 
+    testGetNonExistentObject,
+    testGetMalformedArg,
+    testGetMultipleObjects,
+    testPutSingleObject,
+    testPutNonExistentRecord,
+    testPutMalformedArg,
+    testDeleteSingleRecordById,
+    testDeleteNonExistentRecord,
+    testMalformedArg,
+    testpostDuplicateEntry
+} = require('../utilities/utilities');
+const { 
+    NOTES_TITLE_MAX_LENGTH,
+    NOTES_CONTENT_MAX_LENGTH
+} = require('../../database/models/Notes');
 
 beforeEach(async () => {
     try {
@@ -22,142 +38,65 @@ beforeEach(async () => {
 });
 
 // Constants
+const verbose = false;
+const debug = false;
 const name = "Test Tag";
 const newTag = { name };
+const newTagsArray = [
+    { name: 'Tag 1' },
+    { name: 'Tag 2' },
+    { name: 'Tag 3' },
+];
 
 // Tests
 // ========================================================
 describe('Tags API', () => {
-    describe('POST /tags', () => {
+    describe(`POST ${combinedTagsPath}`, () => {
         it('Should create tags and should return 201 Created', async () => {
-            const response = await request(server)
-                .post('/tags')
-                .send({ name });
-
-            expect(response.statusCode).toBe(201);
-            expect(response.body).toHaveProperty('id');
-            expect(response.body.name).toBe(newTag.name);
+            await testPostCreation(server, combinedTagsPath, newTag, ['name'], verbose, debug);
         });
         it('Should trigger on duplicate entry and return status 409 ', async () => {
-
-            const response = await request(server)
-                .post('/tags')
-                .send({ name });
-            const responseDuplicate = await request(server)
-                .post('/tags')
-                .send({ name });
-
-            expect(responseDuplicate.statusCode).toBe(409);
+            await testPostDuplicateEntry(server, combinedTagsPath, newTag, verbose);
         });
         it('Should return 400 Bad Request if name is missing', async () => {
-            const response = await request(server)
-                .post('/tags')
-                .send({});
-
-            expect(response.statusCode).toBe(400);
+            const nameMissingOject = { nam: '' };
+            await testPostBadRequest(server, combinedTagsPath, nameMissingOject, verbose);
         });
         it('Should return 400 Bad Request if name is not a string', async () => {
-            const response = await request(server)
-                .post('/tags')
-                .send({ name: 123 });
-
-            expect(response.statusCode).toBe(400);
+            const notStringName = { name: 123 };
+            await testPostBadRequest(server, combinedTagsPath, notStringName, verbose);
         });
         it('Should return 400 Bad Request if name is too short', async () => {
-            const response = await request(server)
-                .post('/tags')
-                .send({ name: '' + 'a'.repeat(MIN_TAG_NAME_LENGTH - 1)});
-
-            expect(response.statusCode).toBe(400);
+            const toShortName = { name: 'a'.repeat(MIN_TAG_NAME_LENGTH - 1) };
+            await testPostBadRequest(server, combinedTagsPath, toShortName, verbose);
         });
         it('Should return 400 Bad Request if name is too long', async () => {
-            const response = await request(server)
-                .post('/tags')
-                .send({ name: 'a'.repeat(MAX_TAG_NAME_LENGTH + 1) });
-
-            expect(response.statusCode).toBe(400);
+            const toLongName = { name: 'a'.repeat(MAX_TAG_NAME_LENGTH + 1) };
+            await testPostBadRequest(server, combinedTagsPath, toLongName, verbose);
         });
     });
-    describe('GET /tags', () => {
-        it('Should return 200 OK', async () => {
-            const response = await request(server)
-                .get('/tags');
-
-            expect(response.statusCode).toBe(200);
-        });
-        it('Should return an array', async () => {
-            const response = await request(server)
-                .get('/tags');
-
-            expect(response.body).toBeInstanceOf(Array);
-        });
-        it('Should return an array of tag objects', async () => {
-            // create multiple tags
-            const tags = [
-                { name: 'Tag 1' },
-                { name: 'Tag 2' },
-                { name: 'Tag 3' },
-            ];
-            await Promise.all(tags.map(tag => request(server).post('/tags').send(tag)));
-
-            const response = await request(server)
-                .get('/tags');
-
-            expect(response.body).toBeInstanceOf(Array);
-            expect(response.body.length).toBeGreaterThan(0);
-            expect(response.body[0]).toBeInstanceOf(Object);
-            expect(response.body[0]).toHaveProperty('id');
-            expect(response.body[0]).toHaveProperty('name');
+    describe(`GET ${combinedTagsPath}`, () => {
+        it('Should return all tags and status code 201', async () => {
+            await testGetMultipleObjects(server, combinedTagsPath, newTagsArray, verbose);
         });
     });
-    describe('GET /tags/:id', () => {
-        it('Should return the tag', async () => {
-            const tags = [
-                { name: 'Tag 1' },
-                { name: 'Tag 2' },
-                { name: 'Tag 3' },
-            ];
-
-            await Promise.all(tags.map(tag => request(server).post('/tags').send(tag)));
-
-            await request(server)
-                .get('/tags')
-            console.log('tags', tags);
-            const createResponse = await request(server)
-                .post('/tags')
-                .send({ name });
-
-            const createResponseId = createResponse.body.id;
-            console.log('createResponseId', createResponseId);
-
-            const response = await request(server)
-                .get(`/tags/${createResponseId}`);
-                
-
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body).toHaveProperty('id');
-            expect(response.body).toHaveProperty('name');
+    describe(`GET ${combinedTagsPath}:id`, () => {
+        it('Should return the tag tag specified by the id and status code 201', async () => {
+            const postResponse = await request(server).post(combinedTagsPath).send(newTag);
+            console.log('postResponse stattus:' , postResponse.status)
+            console.log('postResponse.body:', postResponse.body);
+            const tagId = Number(postResponse.body.id);
+            console.log('tagId:', tagId);
+            const expectedTag = {id: tagId, name, color_id: null };
+           await testGetSingleObjectById(server, `${combinedTagsPath}/${tagId}`, expectedTag, verbose);
         });
-        it('Should return a single tag object', async () => {
-            const response = await request(server)
-                .get('/tags/1');
-
-            expect(response.body).toBeInstanceOf(Object);
-            expect(response.body).toHaveProperty('id');
-            expect(response.body).toHaveProperty('name');
-        });
-        it('Should return 404 Not Found if tag (id: 9999999) does not exist', async () => {
-            const response = await request(server)
-                .get('/tags/9999999');
-
-            expect(response.statusCode).toBe(404);
+        it('should return 404 not found if tag with the specified id does not exist', async () => {
+           const nonExistentId = 9999;
+           // Could be any number as the database should be cleared for each test
+           await testGetNonExistentObject(server, `${combinedTagsPath}/${nonExistentId}`, verbose); 
         });
     });
 });
 
-afterAll(async (done) => { 
-    await pool.end(); // close the database connection pool
-    server.
-    done(); 
-});
+// close the server after each test
+server.close();

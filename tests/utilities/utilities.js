@@ -40,10 +40,18 @@ async function createTempRecord(server, path, object) {
  * const properties = ['name'];
  * await testObjectCreation(path, object, properties);
  */
-async function testPostCreation(server, path, object, properties, verbose = false) {
+async function testPostCreation(server, path, object, properties, verbose = false, debug = false) {
     const response = await request(server)
         .post(path)
         .send(object);
+
+    if (debug) {
+        console.log(testPostCreation.name);
+        console.log("response");
+        console.log(response);
+        console.log("response body");
+        console.log(response.body);
+    }
 
     expect(response.statusCode).toBe(201);
     expect(response.body).toHaveProperty('id');
@@ -99,7 +107,9 @@ async function testPostBadRequest(server, path, object, verbose = false) {
  * 
  * @param {object} server - The server to send the request to
  * @param {string} path - The path to send the request to
- * @param {object} expectedObject - The object to compare the response body to. 
+ * @param {object} expectedObject - The object to compare the response body to.
+ * @param {boolean} verbose - Whether to log a message with the response status and body to the console
+ *  
  * @returns {Promise} - A promise that resolves to the response from the server
  * @throws {Error} - An error if the response status code is not 200
  * @throws {Error} - An error if the response body does not have an id property
@@ -119,6 +129,8 @@ async function testGetSingleObjectById(server, path, expectedObject, verbose = f
 
     // iterate over the properties of the expected object and compare them to the response body
     for (const property in expectedObject) {
+        // skip the id property
+        if (property === 'id') continue;
         expect(response.body[property]).toBe(expectedObject[property]);
     }
 
