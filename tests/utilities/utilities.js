@@ -6,6 +6,21 @@
 // ========================================================
 const request = require('supertest');
 
+
+/**
+ * Create a temporary record in the database
+ * 
+ * @param {object} server - The server to send the request to
+ * @param {string} path - The path to send the request to
+ * @param {object} object - The object to send in the request body. Must have all required properties.
+ * 
+ * @returns {Promise} - A promise that resolves to the ID of the created record
+ */
+async function createTempRecord(server, path, object) {
+    const postResponse = await request(server).post(path).send(object);
+    return Number(postResponse.body.id);
+}
+
 /**
  * Test object creation
  * 
@@ -228,12 +243,147 @@ async function testPutSingleObject(server, path, newObject, updatedObject, verbo
     }
 }
 
+/**
+ * Test trying to update a single object that does not exist - PUT
+ * Assumes the id in the path is the id of a non-existent object
+ * 
+ * @param {object} server - The server to send the request to
+ * @param {string} path - The path to send the request to. Must include the PUT parameter.
+ * @param {object} updatedObject - The object to send in the request body. Must have all required properties.
+ * @param {boolean} verbose - Whether to log a message with the response status and body to the console
+ */
+async function testPutNonExistentRecord(server, path, updatedObject, verbose = false) {
+    const response = await request(server).put(path).send(updatedObject);
+
+    expect(response.statusCode).toBe(404);
+    if (verbose) {
+        console.log(`PUT ${path} test with status: ${response.status}\nSent object: ${JSON.stringify(updatedObject, null, 2)}\nResponse: ${JSON.stringify(response.body, null, 2)}`);
+    }
+}
+
+/**
+ * Test trying to update an object with a malformed argument - PUT
+ * 
+ * @param {object} server - The server to send the request to
+ * @param {string} path - The path to send the request to. Must include the PUT parameter.
+ * @param {object} updatedObject - The object to send in the request body. Must have all required properties.
+ * @param {boolean} verbose - Whether to log a message with the response status and body to the console
+ * 
+ * @throws {Error} - An error if the response status code is not 400
+ */
+async function testPutMalformedArg(server, path, updatedObject, verbose = false) {
+    const putResponse = await request(server).put(path).send(updatedObject);
+    
+    expect(putResponse.statusCode).toBe(400);
+    if (verbose) {
+        console.log(`Malformed path: ${path} or Arg Object: ${JSON.stringify(updatedObject, null, 2)}\nPUT ${path} test with status: ${putResponse.status}\nResponse: ${JSON.stringify(putResponse.body, null, 2)}`);
+    }
+}
+
+/**
+ * Test deleting a single record
+ * 
+ * @param {object} server - The server to send the request to
+ * @param {string} path - The path to send the request to without the id parameter
+ * @param {object} testObject - The object to send in the request body. Must have all required properties.
+ * @param {boolean} verbose - Whether to log a message with the response status and body to the console
+ * 
+ * @returns {Promise} - A promise that resolves to the response from the server
+ */
+async function testDeleteSingleRecordById(server, path, testObject, verbose = false) {
+    const testRecordId = await createTempRecord(server, path, testObject);
+    
+    const deleteResponse = await request(server).delete(`${path}/${testRecordId}`);
+
+    expect(deleteResponse.statusCode).toBe(204);
+    if (verbose) {
+        console.log(`POST created object with id: ${testRecordId}\nDELETE ${path}/${testObject} test with status: ${deleteResponse.status}\nResponse: ${JSON.stringify(deleteResponse.body, null, 2)}`);
+    }
+}
+
+/**
+ * Test trying to delete a single record that does not exist - DELETE
+ * Assumes the id in the path is the id of a non-existent object
+ * 
+ * @param {object} server - The server to send the request to
+ * @param {string} path - The path to send the request to. Must include the DELETE parameter.
+ * @param {boolean} verbose - Whether to log a message with the response status and body to the console
+ * 
+ * @throws {Error} - An error if the response status code is not 404
+ */
+async function testDeleteNonExistentRecord(server, path, verbose = false) {
+    const deleteResponse = await request(server).delete(path);
+
+    expect(deleteResponse.statusCode).toBe(404);
+    if (verbose) {
+        console.log(`DELETE ${path} test with status: ${deleteResponse.status}\nResponse: ${JSON.stringify(deleteResponse.body, null, 2)}`);
+    }
+}
+
+async function testDeleteMalformedArg(server, path, verbose = false) {
+    const response = await request(server).delete(path);
+
+    expect(response.statusCode).toBe(400);
+    if (verbose) {
+        console.log(`DELETE ${path} test with status: ${response.status}`);
+    }
+}
+
+/**
+ * Test trying to send a malformed argument to a route
+ * 
+ * @param {object} server - The server to send the request to
+ * @param {string} method - The HTTP method to use. Must be one of: GET, POST, PUT, DELETE or get, post, put, delete
+ * @param {string} path - The path to send the request to
+ * @param {object} data - The data to send in the request body. Must have all required properties.
+ * @param {boolean} verbose - Whether to log a message with the response status and body to the console
+ * 
+ * @returns {Promise} - A promise that resolves to the response from the server
+ * 
+ * @throws {Error} - An error if the response status code is not 400
+ * 
+ * @example
+ * const path = '/tags';
+ * const data = { name: 'Test Tag' };
+ * await testMalformedArg(app, 'post', path, data);
+ */
+async function testMalformedArg(server, method, path, data = {}, verbose = false) {
+    let response;
+    switch (method.toLowerCase()) {
+        case 'get':
+            response = await request(server).get(path);
+            break;
+        case 'post':
+            response = await request(server).post(path).send(data);
+            break;
+        case 'put':
+            response = await request(server).put(path).send(data);
+            break;
+        case 'delete':
+            response = await request(server).delete(path);
+            break;
+        default:
+            throw new Error(`Invalid method: ${method}`);
+    }
+
+    expect(response.statusCode).toBe(400);
+    if (verbose) {
+        console.log(`${method.toUpperCase()} ${path} test with status: ${response.status}\nResponse: ${JSON.stringify(response.body, null, 2)}`);
+    }
+}
+
 module.exports = {
+    createTempRecord,
+    testMalformedArg,
     testPostCreation,
     testPostBadRequest,
     testGetSingleObjectById,
     testGetNonExistentObject,
     testGetMalformedArg,
     testGetMultipleObjects,
-    testPutSingleObject
+    testPutSingleObject,
+    testPutNonExistentRecord,
+    testPutMalformedArg,
+    testDeleteSingleRecordById,
+    testDeleteNonExistentRecord
 };
