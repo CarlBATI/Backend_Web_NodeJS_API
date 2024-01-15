@@ -54,6 +54,19 @@ async function testPostCreation(server, path, object, properties, verbose = fals
     if (verbose) console.log(`Created object for POST ${path} test with ID: ${response.body.id}\n${JSON.stringify(response.body, null, 2)}`);
 }
 
+async function testPostDuplicateEntry(server, path, object, verbose = false) {
+    const firstResponse = await request(server).post(path).send(object);
+    const duplicateResponse = await request(server).post(path).send(object);
+    console.log('RESPONSES')
+    console.log(`firstResponse: ${JSON.stringify(firstResponse.body, null, 2)}`);
+    console.log(`duplicateResponse: ${JSON.stringify(duplicateResponse.body, null, 2)}`);
+
+    expect(duplicateResponse.statusCode).toBe(409);
+    if (verbose) {
+        console.log(`Sending two identical requests for: ${object} to POST ${path} test with status ${duplicateResponse.status}\nResponse: ${JSON.stringify(duplicateResponse.body, null, 2)}`);
+    }
+}
+
 /**
  * Test bad request - POST
  * Sending a malformed object should return status 400 Bad Request
@@ -376,6 +389,7 @@ module.exports = {
     createTempRecord,
     testMalformedArg,
     testPostCreation,
+    testPostDuplicateEntry,
     testPostBadRequest,
     testGetSingleObjectById,
     testGetNonExistentObject,

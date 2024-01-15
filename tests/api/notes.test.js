@@ -36,6 +36,8 @@ const {
 const title = 'Test Title';
 const content = 'Test Content';
 
+
+// Clear the database before each test
 beforeEach(async () => {
     try {
         await clearDatabase();
@@ -53,7 +55,7 @@ describe('Notes API', () => {
     describe(`POST ${combinedNotesPath}`, () => {
         it('should create a new note and return it with status code 201', async () => {
             const newNote = { title, content };
-            testPostCreation(server, combinedNotesPath, newNote, ['titl', 'content'], false);
+            testPostCreation(server, combinedNotesPath, newNote, ['title', 'content'], false);
         });
         it('should return 400 if the request body is missing a title', async () => {
             const newNote = { content };
