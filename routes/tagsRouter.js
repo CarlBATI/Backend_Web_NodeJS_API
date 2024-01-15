@@ -15,7 +15,7 @@ const { DuplicateEntryError, NotFoundError } = require('../utils/errors/query.er
 // ========================================================
 
 // POST /tags route for creating a new tag
-tagsRouter.post('/tags', async (req, res, next) => {
+tagsRouter.post('/', async (req, res, next) => {
     const { name } = req.body;
     try {
         const response = await createTag(name);
@@ -32,7 +32,7 @@ tagsRouter.post('/tags', async (req, res, next) => {
 });
 
 // GET /tags route for retrieving all tags
-tagsRouter.get('/tags', async (req, res, next) => {
+tagsRouter.get('/', async (req, res, next) => {
   try {
     const response = await readAllTags();
     res.status(200).json(response);
@@ -42,7 +42,7 @@ tagsRouter.get('/tags', async (req, res, next) => {
 });
 
 // GET /tags/:id route for retrieving a tag by id
-tagsRouter.get('/tags/:id', async (req, res, next) => {
+tagsRouter.get('/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
         const response = await readTagById(id);
